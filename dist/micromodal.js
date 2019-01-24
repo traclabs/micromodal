@@ -4,7 +4,7 @@
 	(global.MicroModal = factory());
 }(this, (function () { 'use strict';
 
-var version = "0.3.1";
+var version = "0.3.2";
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -64,7 +64,8 @@ var MicroModal = function () {
           _ref$awaitCloseAnimat = _ref.awaitCloseAnimation,
           awaitCloseAnimation = _ref$awaitCloseAnimat === undefined ? false : _ref$awaitCloseAnimat,
           _ref$debugMode = _ref.debugMode,
-          debugMode = _ref$debugMode === undefined ? false : _ref$debugMode;
+          debugMode = _ref$debugMode === undefined ? false : _ref$debugMode,
+          _ref$id = _ref.id;
       classCallCheck(this, Modal);
 
       // Save a reference of the modal
@@ -79,6 +80,9 @@ var MicroModal = function () {
       // prebind functions for event listeners
       this.onClick = this.onClick.bind(this);
       this.onKeydown = this.onKeydown.bind(this);
+
+      // save modal id
+      this.id = targetModal;
     }
 
     /**
@@ -106,6 +110,15 @@ var MicroModal = function () {
     }, {
       key: 'showModal',
       value: function showModal() {
+        var isOpenClassName = 'is-open';
+        if (this.modal.classList.contains(isOpenClassName)) {
+          if (this.config.debugMode) console.warn('Modal already open');
+          return;
+        }
+        openModals.push(this);
+        var parentDOMNode = this.modal.parentNode;
+        parentDOMNode.removeChild(this.modal);
+        parentDOMNode.appendChild(this.modal);
         this.activeElement = document.activeElement;
         this.modal.setAttribute('aria-hidden', 'false');
         this.modal.classList.add('is-open');
@@ -117,11 +130,15 @@ var MicroModal = function () {
     }, {
       key: 'closeModal',
       value: function closeModal() {
+        var _this2 = this;
+
+        openModals = openModals.filter(function (obj) {
+          return obj.id !== _this2.id;
+        });
         var modal = this.modal;
         this.modal.setAttribute('aria-hidden', 'true');
         this.removeEventListeners();
         this.scrollBehaviour('enable');
-        this.activeElement.focus();
         this.config.onClose(this.modal);
 
         if (this.config.awaitCloseAnimation) {
@@ -153,14 +170,12 @@ var MicroModal = function () {
       value: function addEventListeners() {
         this.modal.addEventListener('touchstart', this.onClick);
         this.modal.addEventListener('click', this.onClick);
-        document.addEventListener('keydown', this.onKeydown);
       }
     }, {
       key: 'removeEventListeners',
       value: function removeEventListeners() {
         this.modal.removeEventListener('touchstart', this.onClick);
         this.modal.removeEventListener('click', this.onClick);
-        document.removeEventListener('keydown', this.onKeydown);
       }
     }, {
       key: 'onClick',
@@ -173,7 +188,6 @@ var MicroModal = function () {
     }, {
       key: 'onKeydown',
       value: function onKeydown(event) {
-        if (event.keyCode === 27) this.closeModal(event);
         if (event.keyCode === 9) this.maintainFocus(event);
       }
     }, {
@@ -227,6 +241,9 @@ var MicroModal = function () {
 
 
   var activeModal = null;
+
+  // Keep an array of open modals so that esc key only closes top-most modal
+  var openModals = [];
 
   /**
    * Generates an associative array of modals and it's
@@ -315,6 +332,18 @@ var MicroModal = function () {
       options.triggers = [].concat(toConsumableArray(value));
       new Modal(options); // eslint-disable-line no-new
     }
+
+    // Watch document for esc key to close modals top to bottom
+    document.addEventListener('keydown', onKeyDown);
+  };
+
+  var onKeyDown = function onKeyDown(event) {
+    if (event.keyCode === 27) {
+      if (openModals.length > 0) {
+        var currentModal = openModals[openModals.length - 1];
+        if (currentModal) currentModal.closeModal();
+      }
+    }
   };
 
   /**
@@ -325,7 +354,7 @@ var MicroModal = function () {
    */
   var show = function show(targetModal, config) {
     var options = config || {};
-    options.targetModal = targetModal;
+    options.targetModal = targetModal.replace(/^#/, '');
 
     // Checks if modals and triggers exist in dom
     if (options.debugMode === true && validateModalPresence(targetModal) === false) return;
@@ -337,10 +366,21 @@ var MicroModal = function () {
 
   /**
    * Closes the active modal
+   * @param {string} [targetModal] - The id of the modal to close.
    * @return {void}
    */
-  var close = function close() {
-    activeModal.closeModal();
+  var close = function close(targetModal) {
+    var modalToClose = {};
+    if (targetModal) {
+      targetModal = targetModal.replace(/^#/, '');
+      var result = openModals.filter(function (obj) {
+        return obj.id === targetModal;
+      });
+      modalToClose = result[0];
+    } else {
+      modalToClose = openModals[openModals.length - 1];
+    }
+    modalToClose.closeModal();
   };
 
   return { init: init, show: show, close: close };
