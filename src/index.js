@@ -46,6 +46,9 @@ const MicroModal = (() => {
 
       // save modal id
       this.id = targetModal
+
+      // Add class to say this element has been initialized
+      this.modal.classList.add('micromodal-initialized')
     }
 
     /**
@@ -308,10 +311,25 @@ const MicroModal = (() => {
     } else {
       modalToClose = openModals[openModals.length - 1]
     }
-    modalToClose.closeModal()
+    try {
+      modalToClose.closeModal()
+    } catch (e) {
+      console.warn('Cannot call close on Modal', targetModal)
+    }
   }
 
-  return { init, show, close }
+  const initialized = (targetModal) => {
+    var modalElement
+    targetModal = targetModal.replace(/^#/, '')
+    modalElement = document.getElementById(targetModal)
+    if (modalElement.classList.contains('micromodal-initialized')) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  return { init, show, close, initialized }
 })()
 
 export default MicroModal
