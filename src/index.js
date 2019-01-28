@@ -322,6 +322,7 @@ const MicroModal = (() => {
     var modalElement
     targetModal = targetModal.replace(/^#/, '')
     modalElement = document.getElementById(targetModal)
+    if (modalElement === null) return false
     if (modalElement.classList.contains('micromodal-initialized')) {
       return true
     } else {
