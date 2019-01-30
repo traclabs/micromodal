@@ -4,7 +4,7 @@
 	(global.MicroModal = factory());
 }(this, (function () { 'use strict';
 
-var version = "0.3.2";
+var version = "0.4.0";
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -83,6 +83,9 @@ var MicroModal = function () {
 
       // save modal id
       this.id = targetModal;
+
+      // Add class to say this element has been initialized
+      this.modal.classList.add('micromodal-initialized');
     }
 
     /**
@@ -380,10 +383,26 @@ var MicroModal = function () {
     } else {
       modalToClose = openModals[openModals.length - 1];
     }
-    modalToClose.closeModal();
+    try {
+      modalToClose.closeModal();
+    } catch (e) {
+      console.warn('Cannot call close on Modal', targetModal);
+    }
   };
 
-  return { init: init, show: show, close: close };
+  var initialized = function initialized(targetModal) {
+    var modalElement;
+    targetModal = targetModal.replace(/^#/, '');
+    modalElement = document.getElementById(targetModal);
+    if (modalElement === null) return false;
+    if (modalElement.classList.contains('micromodal-initialized')) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  return { init: init, show: show, close: close, initialized: initialized };
 }();
 
 return MicroModal;
