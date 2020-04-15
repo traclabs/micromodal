@@ -4,7 +4,7 @@
 	(global.MicroModal = factory());
 }(this, (function () { 'use strict';
 
-var version = "0.4.0";
+var version = "0.4.1";
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -85,7 +85,11 @@ var MicroModal = function () {
       this.id = targetModal;
 
       // Add class to say this element has been initialized
-      this.modal.classList.add('micromodal-initialized');
+      try {
+        this.modal.classList.add('micromodal-initialized');
+      } catch (e) {
+        throw 'Could not initialize ' + targetModal; /* eslint-disable-line no-throw-literal */
+      }
     }
 
     /**
