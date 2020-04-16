@@ -13,7 +13,7 @@
   ],
   "module": "dist/micromodal.es.js",
   "jsdelivr": "dist/micromodal.min.js",
-  "main": "index.js",
+  "main": "dist/micromodal.js",
   "scripts": {
     "dev": "concurrently \"yarn lib:dev\" \"yarn docs:dev\"",
     "build": "yarn lib:build && yarn docs:build && cp lib/dist/* dist/",
