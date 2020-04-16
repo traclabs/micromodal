@@ -41,7 +41,7 @@
 				</p>
 			</main>
 			<footer class="modal__footer">
-				<button class="modal__btn modal__btn-primary">Continue</button>
+				<button class="modal__btn modal__btn-primary continue-button">Continue</button>
 				<button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
 			</footer>
 			</div>
@@ -62,7 +62,7 @@
 				</p>
 			</main>
 			<footer class="modal__footer">
-				<button class="modal__btn modal__btn-primary">Continue</button>
+				<button class="modal__btn modal__btn-primary continue-button">Continue</button>
 				<button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
 			</footer>
 			</div>
@@ -86,14 +86,14 @@
 				</p>
 			</main>
 			<footer class="modal__footer">
-				<button class="modal__btn modal__btn-primary">Continue</button>
+				<button class="modal__btn modal__btn-primary continue-button">Continue</button>
 				<button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
 			</footer>
 			</div>
 		</div>
 	</div>
 	<div id="buttons">
-			<button data-micromodal-trigger="modal-1" onclick="console.log('This should open modal 1')">Show Modal 1</button>
+			<button onclick="console.log('This should open modal 1'); showModal('modal-1')">Show Modal 1</button>
 			<button onclick="console.log('This should open modal 2'); showModal('modal-2')">Show Modal 2</button>
 			<button onclick="console.log('This should open modal 3'); showModal('modal-3')">Show Modal 3</button>
 			<button onclick="console.log('This should open modals 1, 3, 2.  Modal 2 should be on top and close first.  Modal 1 should be on bottom and close last'); showModal('modal-1'); showModal('modal-3'); showModal('modal-2')">Open 1, 3, 2</button>
@@ -115,22 +115,36 @@
 				Donec imperdiet ex ut neque fringilla scelerisque. In cursus purus sem, in fringilla sem dictum at. Vivamus pretium diam at ligula lobortis, quis imperdiet metus iaculis. Donec dapibus, tortor et scelerisque consequat, urna lacus dapibus risus, id bibendum est dui id elit. Nullam dui enim, euismod in euismod a, tempus vel odio. Mauris condimentum tortor malesuada arcu malesuada, id venenatis turpis faucibus. Fusce quis pretium orci. Praesent non tortor a justo lacinia tempus. Duis rhoncus lectus quis turpis tincidunt, et mattis dolor venenatis. Etiam vel venenatis ex, quis fringilla mauris. In vel tellus tortor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin tincidunt laoreet arcu, ut tempus enim mollis in. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
 			</p>
 		</div>
-	<script src="site.min.js"></script>
+	<script src="../lib/dist/micromodal.js"></script>
 	<script>
 		MicroModal.init({
 			debugMode: true
 		});
+
 		function showModal(id) {
-			MicroModal.show(id)
+			const config = {
+				onClose: (modal, activeElement, event) => {
+					console.log('modal', modal);
+					console.log('activeElement', activeElement);
+					console.log('event', event);
+				}
+			}
+			MicroModal.show(id, config);
 		}
+
 		function showAll() {
-			var elements = document.querySelectorAll('.modal');
+			const elements = document.querySelectorAll('.modal');
 			Array.prototype.forEach.call(elements, function(el, i){
-				var id = el.getAttribute('id');
-				console.log(id);
+				const id = el.getAttribute('id');
 				showModal(id);
 			});
 		}
+
+		const continueButtons = document.querySelectorAll('.continue-button');
+		Array.prototype.forEach.call(continueButtons, function(el, i){
+		const id = el.getAttribute('id');
+			el.addEventListener('click',(event) => { MicroModal.close(id, event) });
+		});
 	</script>
 </body>
 </html>
