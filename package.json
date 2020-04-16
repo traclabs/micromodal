@@ -2,7 +2,7 @@
   "name": "@micromodal/repo",
   "version": "1.0.0",
   "description": "",
-  "private": true,
+  "private": false,
   "workspaces": [
     "lib",
     "docs",
@@ -11,6 +11,8 @@
   "browserslist": [
     "last 2 version"
   ],
+  "module": "dist/micromodal.es.js",
+  "jsdelivr": "dist/micromodal.min.js",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"yarn lib:dev\" \"yarn docs:dev\"",
