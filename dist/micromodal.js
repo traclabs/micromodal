@@ -348,6 +348,7 @@ var MicroModal = function () {
     if (event.keyCode === 27) {
       if (openModals.length > 0) {
         var currentModal = openModals[openModals.length - 1];
+        if (currentModal.modal.getAttribute('data-micromodal-close-on-esc') === 'false') return;
         if (currentModal) currentModal.closeModal();
       }
     }
