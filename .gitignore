@@ -1,4 +1,8 @@
 .DS_Store
 /node_modules
-/cypress
+*/node_modules
 package-lock.json
+yarn-error.log
+*/.cache
+*/dist
+*/screenshots

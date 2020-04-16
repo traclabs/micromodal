@@ -1,0 +1,25 @@
+{
+  "name": "@micromodal/tests",
+  "version": "0.1.0",
+  "description": "Tests for micromodal",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "lib",
+    "docs",
+    "tests"
+  ],
+  "scripts": {
+    "start": "parcel examples/*.html",
+    "serve": "node server.js",
+    "cypress:open": "cypress open",
+    "cypress:cli": "cypress run"
+  },
+  "author": "Indrashish Ghosh",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "4.0.2",
+    "express": "latest",
+    "parcel-bundler": "latest"
+  }
+}
